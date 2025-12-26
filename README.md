@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SQL Where Clause Conversion Tool
 
 A powerful AI-powered tool that converts SQL statements between different database dialects using Google Gemini.

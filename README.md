@@ -109,11 +109,3 @@ Edit `config.py` to customize:
 ## 📝 License
 
 MIT License - feel free to use and modify as needed.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-=======
-# AI_SQL_Dialect_Converter
-A AI based tool which will convert the One Dialect specific syntax into the target specific syntax queries 
->>>>>>> 7c850869c7580b16cbbb4694997ed79d14636ee3

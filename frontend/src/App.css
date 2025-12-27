@@ -1,0 +1,182 @@
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 300px;
+    padding: 2rem;
+    max-width: 1400px;
+    margin-right: auto;
+}
+
+.main-content-full {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+    padding: 2rem 4rem;
+}
+
+.content-container {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Input Section */
+.input-section {
+    margin-bottom: 2rem;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+/* Divider */
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 2rem 0;
+}
+
+/* Convert Section */
+.convert-section {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.convert-button {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 250px;
+    justify-content: center;
+}
+
+.convert-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.convert-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.convert-button.converting {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Empty State */
+.empty-state {
+    background: rgba(102, 126, 234, 0.05);
+    border: 1px dashed var(--border-color);
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    margin: 2rem 0;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    font-size: 1rem;
+}
+
+/* Footer */
+.footer {
+    margin-top: 4rem;
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.footer-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin-bottom: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .convert-button {
+        width: 100%;
+    }
+}
+
+/* Toast Customization */
+.Toastify__toast {
+    background: var(--surface-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-family: var(--font-family);
+}
+
+.Toastify__toast--success {
+    border-left: 4px solid var(--success);
+}
+
+.Toastify__toast--error {
+    border-left: 4px solid var(--error);
+}
+
+.Toastify__toast--warning {
+    border-left: 4px solid var(--warning);
+}
+
+.Toastify__toast--info {
+    border-left: 4px solid #667eea;
+}
+
+.Toastify__progress-bar {
+    background: var(--primary-gradient);
+}

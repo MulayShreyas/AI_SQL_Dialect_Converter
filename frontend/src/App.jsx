@@ -1,0 +1,245 @@
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Header from './components/Header';
+import FileUpload from './components/FileUpload';
+import ManualInput from './components/ManualInput';
+import DialectSelector from './components/DialectSelector';
+import StatementPreview from './components/StatementPreview';
+import ConversionResults from './components/ConversionResults';
+import ProgressBar from './components/ProgressBar';
+import { apiService } from './services/api';
+import './App.css';
+
+function App() {
+    // State management
+    const [dialects, setDialects] = useState([]);
+    const [formats, setFormats] = useState([]);
+    const [sourceDialect, setSourceDialect] = useState('');
+    const [targetDialect, setTargetDialect] = useState('');
+    const [statements, setStatements] = useState([]);
+    const [results, setResults] = useState(null);
+    const [isConverting, setIsConverting] = useState(false);
+
+    // Load dialects and formats on mount
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [dialectsData, formatsData] = await Promise.all([
+                    apiService.getDialects(),
+                    apiService.getFormats(),
+                ]);
+
+                setDialects(dialectsData);
+                setFormats(formatsData);
+
+                // Set default values
+                if (dialectsData.length >= 2) {
+                    setSourceDialect(dialectsData[0]);
+                    setTargetDialect(dialectsData[1]);
+                }
+            } catch (error) {
+                toast.error('Failed to load configuration');
+                console.error(error);
+            }
+        };
+
+        loadData();
+    }, []);
+
+    // Handle file upload
+    const handleFileUpload = async (file) => {
+        try {
+            toast.info('Parsing file...');
+            const data = await apiService.parseFile(file);
+            setStatements(data.statements);
+            toast.success(`Extracted ${data.count} SQL statement(s)`);
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Failed to parse file');
+            console.error(error);
+        }
+    };
+
+    // Handle manual SQL input
+    const handleManualInput = async (sqlText) => {
+        try {
+            const data = await apiService.parseSQL(sqlText);
+            setStatements(data.statements);
+            toast.success(`Parsed ${data.count} SQL statement(s)`);
+        } catch (error) {
+            toast.error('Failed to parse SQL');
+            console.error(error);
+        }
+    };
+
+    // Handle conversion
+    const handleConvert = async () => {
+        if (!statements || statements.length === 0) {
+            toast.warning('Please provide SQL statements to convert');
+            return;
+        }
+
+        if (sourceDialect === targetDialect) {
+            toast.warning('Source and target dialects must be different');
+            return;
+        }
+
+        setIsConverting(true);
+        setResults(null);
+
+        try {
+            toast.info('Converting SQL statements...');
+            const data = await apiService.convertSQL(
+                statements,
+                sourceDialect,
+                targetDialect
+            );
+
+            setResults(data);
+
+            if (data.success_count > 0) {
+                toast.success(`Successfully converted ${data.success_count} statement(s)`);
+            }
+            if (data.error_count > 0) {
+                toast.warning(`${data.error_count} statement(s) failed to convert`);
+            }
+        } catch (error) {
+            const errorMsg = error.response?.data?.detail || 'Conversion failed';
+            toast.error(errorMsg);
+            console.error(error);
+        } finally {
+            setIsConverting(false);
+        }
+    };
+
+    // Handle export
+    const handleExport = async (format) => {
+        if (!results || !results.results) {
+            toast.warning('No results to export');
+            return;
+        }
+
+        try {
+            toast.info(`Generating ${format}...`);
+            await apiService.exportResults(
+                results.results,
+                sourceDialect,
+                targetDialect,
+                format
+            );
+            toast.success(`${format} downloaded successfully`);
+        } catch (error) {
+            toast.error(`Failed to export ${format}`);
+            console.error(error);
+        }
+    };
+
+    return (
+        <div className="app">
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
+
+            <main className="main-content main-content-full">
+                <Header />
+
+                <div className="content-container">
+                    {/* Input Section */}
+                    <div className="input-section">
+                        <div className="input-grid">
+                            <FileUpload onFileUpload={handleFileUpload} />
+                            <ManualInput onSubmit={handleManualInput} />
+                        </div>
+                    </div>
+
+                    <div className="divider" />
+
+                    {/* Dialect Selector */}
+                    <DialectSelector
+                        dialects={dialects}
+                        sourceDialect={sourceDialect}
+                        targetDialect={targetDialect}
+                        onSourceDialectChange={setSourceDialect}
+                        onTargetDialectChange={setTargetDialect}
+                    />
+
+                    <div className="divider" />
+
+                    {/* Preview Section */}
+                    {statements.length > 0 && (
+                        <>
+                            <StatementPreview statements={statements} />
+                            <div className="divider" />
+                        </>
+                    )}
+
+                    {/* Convert Button */}
+                    <div className="convert-section">
+                        <button
+                            className={`convert-button ${isConverting ? 'converting' : ''}`}
+                            onClick={handleConvert}
+                            disabled={isConverting || statements.length === 0}
+                        >
+                            {isConverting ? (
+                                <>
+                                    <span className="spinner" />
+                                    Converting...
+                                </>
+                            ) : (
+                                <>
+                                    🚀 Convert to {targetDialect}
+                                </>
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Progress Bar */}
+                    {isConverting && (
+                        <ProgressBar 
+                            isActive={isConverting} 
+                            message={`Converting ${statements.length} SQL statement(s) to ${targetDialect}...`}
+                        />
+                    )}
+
+                    {/* Results Section */}
+                    {results && (
+                        <>
+                            <div className="divider" />
+                            <ConversionResults
+                                results={results}
+                                formats={formats}
+                                onExport={handleExport}
+                            />
+                        </>
+                    )}
+
+                    {/* Empty State */}
+                    {statements.length === 0 && !results && (
+                        <div className="empty-state">
+                            <div className="empty-state-icon">📌</div>
+                            <h3>No SQL statements detected yet</h3>
+                            <p>Upload a file or paste SQL in the text area above to start the conversion.</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <footer className="footer">
+                    <div className="footer-divider" />
+                    <p>SQL Dialect Converter • Powered by AI • Made with ❤️</p>
+                </footer>
+            </main>
+        </div>
+    );
+}
+
+export default App;

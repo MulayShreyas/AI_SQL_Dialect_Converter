@@ -1,0 +1,138 @@
+.statement-preview {
+    animation: fadeIn 0.5s ease-out;
+    margin: 2rem 0;
+}
+
+.preview-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.preview-info {
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.preview-info strong {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.statements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.statement-item {
+    background: var(--surface-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.statement-item:hover {
+    border-color: #667eea;
+}
+
+.statement-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.statement-header:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.statement-number {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.expand-icon {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+.statement-content {
+    padding: 0 1.5rem 1.5rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+.sql-code {
+    background: #1e1e3f;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.sql-code code {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Prism.js theme customization */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #6a9955;
+}
+
+.token.keyword {
+    color: #569cd6;
+}
+
+.token.string {
+    color: #ce9178;
+}
+
+.token.number {
+    color: #b5cea8;
+}
+
+.token.function {
+    color: #dcdcaa;
+}
+
+.token.operator {
+    color: #d4d4d4;
+}
+
+@media (max-width: 768px) {
+    .statement-header {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .statement-content {
+        padding: 0 1rem 1rem;
+    }
+
+    .sql-code {
+        font-size: 0.8rem;
+    }
+}

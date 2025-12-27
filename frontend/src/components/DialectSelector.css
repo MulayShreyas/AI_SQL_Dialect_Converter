@@ -1,0 +1,122 @@
+.dialect-selector-container {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--surface-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.dialect-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+}
+
+.dialect-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0 0 1.5rem 0;
+}
+
+.dialect-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: end;
+}
+
+.dialect-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dialect-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dialect-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--surface-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dialect-select:hover {
+    border-color: #667eea;
+}
+
+.dialect-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.swap-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    font-size: 1.2rem;
+}
+
+.swap-button:hover {
+    transform: rotate(180deg) scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.swap-button:active {
+    transform: rotate(180deg) scale(0.95);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .dialect-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .swap-button {
+        justify-self: center;
+        order: 2;
+    }
+
+    .dialect-field:first-child {
+        order: 1;
+    }
+
+    .dialect-field:last-child {
+        order: 3;
+    }
+}

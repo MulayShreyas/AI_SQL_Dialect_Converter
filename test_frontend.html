@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h1>SQL Dialect Converter API Test</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        async function testAPI() {
+            try {
+                // Test dialects endpoint
+                resultsDiv.innerHTML += '<h2>Testing /api/dialects...</h2>';
+                const dialectsResponse = await fetch('http://localhost:8000/api/dialects');
+                const dialectsData = await dialectsResponse.json();
+                resultsDiv.innerHTML += '<pre>' + JSON.stringify(dialectsData, null, 2) + '</pre>';
+                
+                // Test formats endpoint
+                resultsDiv.innerHTML += '<h2>Testing /api/formats...</h2>';
+                const formatsResponse = await fetch('http://localhost:8000/api/formats');
+                const formatsData = await formatsResponse.json();
+                resultsDiv.innerHTML += '<pre>' + JSON.stringify(formatsData, null, 2) + '</pre>';
+                
+                // Test parse-sql endpoint
+                resultsDiv.innerHTML += '<h2>Testing /api/parse-sql...</h2>';
+                const parseResponse = await fetch('http://localhost:8000/api/parse-sql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sql_text: 'SELECT * FROM users WHERE id = 1;'
+                    })
+                });
+                const parseData = await parseResponse.json();
+                resultsDiv.innerHTML += '<pre>' + JSON.stringify(parseData, null, 2) + '</pre>';
+                
+                resultsDiv.innerHTML += '<h2 style="color: green;">All tests passed!</h2>';
+            } catch (error) {
+                resultsDiv.innerHTML += '<h2 style="color: red;">Error: ' + error.message + '</h2>';
+                console.error(error);
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>

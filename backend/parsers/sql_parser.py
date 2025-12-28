@@ -87,26 +87,32 @@ class SQLParser:
     
     def _clean_statement(self, statement: str) -> str:
         """Clean and format a SQL statement."""
-        # Strip whitespace
+        # Strip leading/trailing whitespace
         statement = statement.strip()
         
         # Skip empty or comment-only statements
-        if not statement or statement.startswith('--') or statement.startswith('/*'):
+        if not statement or (statement.startswith('--') or statement.startswith('/*')):
             # But keep if it has SQL content after the comment
             lines = statement.split('\n')
             non_comment_lines = []
             for line in lines:
-                line = line.strip()
-                if not line.startswith('--') and line:
+                stripped = line.strip()
+                if not stripped.startswith('--') and not stripped.startswith('/*') and stripped:
                     non_comment_lines.append(line)
-            statement = ' '.join(non_comment_lines)
+            
+            if non_comment_lines:
+                statement = '\n'.join(non_comment_lines).strip()
+            else:
+                return ""
         
-        # Format with sqlparse
+        # Format with sqlparse - preserve formatting
         if statement:
             statement = sqlparse.format(
                 statement,
                 strip_comments=False,
-                reindent=False,
+                reindent=True,
+                indent_tabs=False,
+                indent_width=2,
                 keyword_case='upper'
             )
         

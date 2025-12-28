@@ -8,6 +8,8 @@ function DialectSelector({
     onSourceDialectChange, 
     onTargetDialectChange 
 }) {
+    console.log('DialectSelector rendered with:', { dialects, sourceDialect, targetDialect });
+    
     const handleSwap = () => {
         const temp = sourceDialect;
         onSourceDialectChange(targetDialect);
@@ -30,6 +32,9 @@ function DialectSelector({
                         value={sourceDialect}
                         onChange={(e) => onSourceDialectChange(e.target.value)}
                     >
+                        {dialects.length === 0 && (
+                            <option value="">Loading dialects...</option>
+                        )}
                         {dialects.map((dialect) => (
                             <option key={dialect} value={dialect}>
                                 {dialect}
@@ -43,6 +48,7 @@ function DialectSelector({
                     className="swap-button" 
                     onClick={handleSwap}
                     title="Swap dialects"
+                    disabled={!sourceDialect || !targetDialect}
                 >
                     <FiRefreshCw />
                 </button>
@@ -57,6 +63,9 @@ function DialectSelector({
                         value={targetDialect}
                         onChange={(e) => onTargetDialectChange(e.target.value)}
                     >
+                        {dialects.length === 0 && (
+                            <option value="">Loading dialects...</option>
+                        )}
                         {dialects.map((dialect) => (
                             <option key={dialect} value={dialect}>
                                 {dialect}

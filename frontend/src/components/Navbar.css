@@ -1,0 +1,430 @@
+/* Navbar Container */
+.navbar {
+    padding: 1.5rem 2rem;
+    background: transparent;
+    animation: fadeIn 0.6s ease-out;
+    width: 100%;
+}
+
+.navbar-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Left Container - Logo */
+.navbar-logo-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.75rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.navbar-logo-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.15);
+}
+
+.logo-icon {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-layer {
+    position: absolute;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.layer-1 {
+    width: 32px;
+    height: 6px;
+    background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+    top: 6px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.layer-2 {
+    width: 32px;
+    height: 6px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    top: 17px;
+    animation: float 3s ease-in-out infinite 0.2s;
+}
+
+.layer-3 {
+    width: 32px;
+    height: 6px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    top: 28px;
+    animation: float 3s ease-in-out infinite 0.4s;
+}
+
+.navbar-logo-container:hover .layer-1 {
+    transform: translateX(-4px) rotate(-3deg);
+}
+
+.navbar-logo-container:hover .layer-2 {
+    transform: translateX(0) scale(1.05);
+}
+
+.navbar-logo-container:hover .layer-3 {
+    transform: translateX(4px) rotate(3deg);
+}
+
+.logo-text {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #2d3561;
+    white-space: nowrap;
+}
+
+/* Right Container - Navigation & Button */
+.navbar-nav-container {
+    display: flex;
+    align-items: end;
+    gap: 2rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(102, 126, 234, 0.15);
+    transition: all 0.3s ease;
+}
+
+.navbar-nav-container:hover {
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.12);
+}
+
+/* Navigation Links */
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-link {
+    position: relative;
+    color: #6b7280;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #2d3561;
+}
+
+.nav-link:hover::before {
+    transform: translateX(-50%) scaleX(1);
+}
+
+.nav-link.active {
+    color: #2d3561;
+}
+
+.active-indicator {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+    animation: slideInIndicator 0.3s ease-out;
+}
+
+/* Sign Up Button */
+.signup-button {
+    position: relative;
+    padding: 0.65rem 1.75rem;
+    background: linear-gradient(135deg, #5b9fd8 0%, #4a90e2 100%);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(74, 144, 226, 0.3);
+}
+
+.signup-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+    background: linear-gradient(135deg, #4a90e2 0%, #5b9fd8 100%);
+}
+
+.signup-button:active {
+    transform: translateY(0);
+}
+
+.button-text {
+    position: relative;
+    z-index: 2;
+}
+
+.button-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.signup-button:hover .button-glow {
+    left: 100%;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.mobile-menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: #2d3561;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInIndicator {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .navbar {
+        padding: 1.5rem 1.5rem;
+    }
+
+    .navbar-wrapper {
+        gap: 1.5rem;
+    }
+
+    .navbar-links {
+        gap: 1.5rem;
+    }
+
+    .logo-text {
+        font-size: 1.2rem;
+    }
+
+    .nav-link {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 968px) {
+    .navbar {
+        padding: 1rem 1rem;
+    }
+
+    .navbar-wrapper {
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .navbar-nav-container {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        padding: 0.65rem 1.25rem;
+    }
+
+    .navbar-links {
+        gap: 1.25rem;
+    }
+
+    .nav-link {
+        font-size: 0.9rem;
+    }
+
+    .signup-button {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .navbar-logo-container {
+        padding: 0.85rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem 0.75rem;
+    }
+
+    .navbar-wrapper {
+        gap: 0.75rem;
+    }
+
+    .navbar-nav-container {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+    }
+
+    .navbar-links {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-link {
+        padding: 0.5rem 0;
+        width: 100%;
+    }
+
+    .signup-button {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+    }
+
+    .logo-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .icon-layer {
+        width: 28px !important;
+        height: 5px !important;
+    }
+
+    .layer-1 {
+        top: 5px;
+    }
+
+    .layer-2 {
+        top: 15px;
+    }
+
+    .layer-3 {
+        top: 25px;
+    }
+
+    .navbar-logo-container {
+        padding: 0.75rem 1.25rem;
+    }
+
+    .logo-text {
+        font-size: 1rem;
+    }
+
+    .mobile-menu-toggle {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .navbar-wrapper {
+        gap: 0.5rem;
+    }
+
+    .logo-text {
+        font-size: 0.9rem;
+    }
+
+    .navbar-logo-container {
+        padding: 0.65rem 1rem;
+    }
+
+    .navbar-nav-container {
+        padding: 0.85rem 1rem;
+    }
+
+    .nav-link {
+        font-size: 0.85rem;
+    }
+
+    .signup-button {
+        font-size: 0.9rem;
+        padding: 0.65rem 1.25rem;
+    }
+}
+
+/* Light theme enhancement */
+@supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+    .navbar-logo-container,
+    .navbar-nav-container {
+        background: rgba(255, 255, 255, 0.9);
+    }
+}

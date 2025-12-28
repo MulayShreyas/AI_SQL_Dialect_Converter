@@ -1,14 +1,7 @@
-import { useState } from 'react';
-import { FiChevronDown, FiChevronUp, FiDownload, FiCheckCircle, FiXCircle } from 'react-icons/fi';
-import Prism from 'prismjs';
+import { FiCheckCircle, FiXCircle, FiDownload } from 'react-icons/fi';
 import './ConversionResults.css';
 
 function ConversionResults({ results, formats, onExport }) {
-    const [expandedIndex, setExpandedIndex] = useState(-1);
-
-    const toggleResult = (index) => {
-        setExpandedIndex(expandedIndex === index ? -1 : index);
-    };
 
     return (
         <div className="conversion-results">
@@ -36,17 +29,13 @@ function ConversionResults({ results, formats, onExport }) {
             <div className="results-list">
                 {results.results.map((result, index) => {
                     const isSuccess = result.status === 'success';
-                    const isExpanded = expandedIndex === index;
 
                     return (
                         <div
                             key={index}
                             className={`result-item ${isSuccess ? 'success' : 'error'}`}
                         >
-                            <button
-                                className="result-header"
-                                onClick={() => toggleResult(index)}
-                            >
+                            <div className="result-header-simple">
                                 <div className="result-header-left">
                                     {isSuccess ? (
                                         <FiCheckCircle className="status-icon success-icon" />
@@ -57,66 +46,10 @@ function ConversionResults({ results, formats, onExport }) {
                                         Statement {index + 1} - {isSuccess ? 'Success' : 'Error'}
                                     </span>
                                 </div>
-                                <span className="expand-icon">
-                                    {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
-                                </span>
-                            </button>
-
-                            {isExpanded && (
-                                <div className="result-content">
-                                    <div className="result-grid">
-                                        {/* Original SQL */}
-                                        <div className="result-column">
-                                            <h4 className="column-title">Original SQL</h4>
-                                            <pre className="sql-code">
-                                                <code
-                                                    className="language-sql"
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: Prism.highlight(
-                                                            result.original,
-                                                            Prism.languages.sql,
-                                                            'sql'
-                                                        ),
-                                                    }}
-                                                />
-                                            </pre>
-                                        </div>
-
-                                        {/* Converted SQL or Error */}
-                                        <div className="result-column">
-                                            {isSuccess ? (
-                                                <>
-                                                    <h4 className="column-title">Converted SQL</h4>
-                                                    <pre className="sql-code">
-                                                        <code
-                                                            className="language-sql"
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: Prism.highlight(
-                                                                    result.converted,
-                                                                    Prism.languages.sql,
-                                                                    'sql'
-                                                                ),
-                                                            }}
-                                                        />
-                                                    </pre>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <h4 className="column-title">Error</h4>
-                                                    <div className="error-message">{result.notes}</div>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Notes */}
-                                    {isSuccess && result.notes && (
-                                        <div className="result-notes">
-                                            <strong>📝 Notes:</strong> {result.notes}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                {!isSuccess && (
+                                    <div className="error-message-inline">{result.notes}</div>
+                                )}
+                            </div>
                         </div>
                     );
                 })}

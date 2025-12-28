@@ -1,19 +1,21 @@
 .manual-input-container {
     animation: fadeIn 0.5s ease-out;
+    padding: auto;
 }
 
 .sql-textarea {
     width: 100%;
     padding: 1rem;
-    background: var(--surface-light);
-    border: 1px solid var(--border-color);
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
     border-radius: 12px;
-    color: var(--text-primary);
+    color: #1f2937;
     font-family: var(--font-mono);
     font-size: 0.9rem;
     resize: vertical;
     min-height: 200px;
     transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .sql-textarea:focus {

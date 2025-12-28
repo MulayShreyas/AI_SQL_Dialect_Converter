@@ -13,13 +13,17 @@ const api = axios.create({
 export const apiService = {
     // Get supported dialects
     getDialects: async () => {
+        console.log('API: Fetching dialects...');
         const response = await api.get('/api/dialects');
+        console.log('API: Dialects response:', response.data);
         return response.data.dialects;
     },
 
     // Get supported formats
     getFormats: async () => {
+        console.log('API: Fetching formats...');
         const response = await api.get('/api/formats');
+        console.log('API: Formats response:', response.data);
         return response.data.formats;
     },
 
@@ -38,9 +42,11 @@ export const apiService = {
 
     // Parse manual SQL input
     parseSQL: async (sqlText) => {
+        console.log('API: Parsing SQL...', sqlText.substring(0, 50));
         const response = await api.post('/api/parse-sql', {
             sql_text: sqlText,
         });
+        console.log('API: Parse SQL response:', response.data);
         return response.data;
     },
 

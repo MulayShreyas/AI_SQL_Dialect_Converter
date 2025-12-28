@@ -40,7 +40,8 @@ class AIConverter:
             "meta-llama/llama-3.3-70b-instruct:free", 
             "mistralai/mistral-small-3.1-24b-instruct:free",
             "google/gemma-3-27b-it:free",
-            "microsoft/phi-3-medium-128k-instruct:free"
+            "microsoft/phi-3-medium-128k-instruct:free",
+            "openai/gpt-4o-mini"
         ]
         
         # Dialect-specific information for better conversions
@@ -353,7 +354,7 @@ IMPORTANT: Only output valid {target_dialect} SQL. Do not include any explanator
             }
             
             payload = {
-                "model": self.model,
+                "model": self.models_to_try[0],
                 "messages": [{"role": "user", "content": "Say OK"}],
                 "max_tokens": 10
             }

@@ -1,10 +1,11 @@
 .dialect-selector-container {
     margin: 2rem 0;
     padding: 1.5rem;
-    background: var(--surface-light);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
     animation: fadeIn 0.5s ease-out;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .dialect-title {
@@ -45,18 +46,20 @@
 .dialect-select {
     width: 100%;
     padding: 0.75rem 1rem;
-    background: var(--surface-dark);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-primary);
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    color: #1f2937;
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .dialect-select:hover {
     border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
 }
 
 .dialect-select:focus {

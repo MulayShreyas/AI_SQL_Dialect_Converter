@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Header from './components/Header';
+import Navbar from './components/Navbar';
 import FileUpload from './components/FileUpload';
 import ManualInput from './components/ManualInput';
 import DialectSelector from './components/DialectSelector';
@@ -25,10 +25,14 @@ function App() {
     useEffect(() => {
         const loadData = async () => {
             try {
+                console.log('Loading dialects and formats...');
                 const [dialectsData, formatsData] = await Promise.all([
                     apiService.getDialects(),
                     apiService.getFormats(),
                 ]);
+
+                console.log('Dialects loaded:', dialectsData);
+                console.log('Formats loaded:', formatsData);
 
                 setDialects(dialectsData);
                 setFormats(formatsData);
@@ -37,10 +41,11 @@ function App() {
                 if (dialectsData.length >= 2) {
                     setSourceDialect(dialectsData[0]);
                     setTargetDialect(dialectsData[1]);
+                    console.log('Default dialects set:', dialectsData[0], '->', dialectsData[1]);
                 }
             } catch (error) {
                 toast.error('Failed to load configuration');
-                console.error(error);
+                console.error('Error loading configuration:', error);
             }
         };
 
@@ -50,25 +55,29 @@ function App() {
     // Handle file upload
     const handleFileUpload = async (file) => {
         try {
+            console.log('Uploading file:', file.name);
             toast.info('Parsing file...');
             const data = await apiService.parseFile(file);
+            console.log('File parsed successfully:', data);
             setStatements(data.statements);
             toast.success(`Extracted ${data.count} SQL statement(s)`);
         } catch (error) {
             toast.error(error.response?.data?.detail || 'Failed to parse file');
-            console.error(error);
+            console.error('File upload error:', error);
         }
     };
 
     // Handle manual SQL input
     const handleManualInput = async (sqlText) => {
         try {
+            console.log('Parsing manual SQL input:', sqlText.substring(0, 100) + '...');
             const data = await apiService.parseSQL(sqlText);
+            console.log('SQL parsed successfully:', data);
             setStatements(data.statements);
             toast.success(`Parsed ${data.count} SQL statement(s)`);
         } catch (error) {
             toast.error('Failed to parse SQL');
-            console.error(error);
+            console.error('Manual SQL parse error:', error);
         }
     };
 
@@ -149,8 +158,16 @@ function App() {
                 theme="dark"
             />
 
+            <Navbar />
+
             <main className="main-content main-content-full">
-                <Header />
+                {/* Hero Section */}
+                <div className="hero-section">
+                    <h1 className="hero-title">🔄 SQL Dialect Converter</h1>
+                    <p className="hero-subtitle">
+                        Transform SQL queries between dialects with AI-powered precision
+                    </p>
+                </div>
 
                 <div className="content-container">
                     {/* Input Section */}

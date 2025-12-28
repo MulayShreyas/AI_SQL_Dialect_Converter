@@ -160,7 +160,7 @@
 }
 
 .sql-code {
-    background: #1e1e3f;
+    background: #fcfcfc;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1rem;
@@ -168,6 +168,7 @@
     margin: 0;
     max-height: 400px;
     overflow-y: auto;
+    color: black;
 }
 
 .sql-code code {

@@ -1,56 +1,129 @@
-.manual-input-container {
+.manual-input-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    padding: 1.25rem;
     animation: fadeIn 0.5s ease-out;
-    padding: auto;
+    transition: all 0.3s ease;
+}
+
+.manual-input-card:hover {
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.card-icon svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+.pencil-icon {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.card-title-section {
+    flex: 1;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.25rem 0;
+}
+
+.card-subtitle {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin: 0;
+    font-style: italic;
+}
+
+.textarea-container {
+    margin-bottom: 0.75rem;
 }
 
 .sql-textarea {
     width: 100%;
     padding: 1rem;
-    background: #ffffff;
-    border: 2px solid #e5e7eb;
+    background: #fafbfc;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     color: #1f2937;
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     resize: vertical;
-    min-height: 200px;
+    min-height: 140px;
     transition: all 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    line-height: 1.6;
 }
 
 .sql-textarea:focus {
     border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
 }
 
 .sql-textarea::placeholder {
-    color: var(--text-secondary);
-    opacity: 0.5;
+    color: #9ca3af;
+    opacity: 0.8;
 }
 
 .input-footer {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    margin-top: 1rem;
 }
 
 .input-hint {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: 0.8rem;
+    color: #9ca3af;
+    font-style: italic;
 }
 
 .hint-icon {
-    font-size: 1rem;
+    font-size: 0.875rem;
 }
 
 @media (max-width: 768px) {
-    .input-footer {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
+    .manual-input-card {
+        padding: 1rem;
+    }
+
+    .sql-textarea {
+        min-height: 120px;
+        padding: 0.875rem;
+        font-size: 0.8rem;
+    }
+
+    .card-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .card-icon svg {
+        width: 18px;
+        height: 18px;
     }
 }

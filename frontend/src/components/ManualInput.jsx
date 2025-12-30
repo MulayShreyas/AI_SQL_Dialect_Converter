@@ -40,18 +40,28 @@ function ManualInput({ onSubmit }) {
     };
 
     return (
-        <div className="manual-input-container">
-            <h3 className="section-title">✍️ Paste SQL Query</h3>
-            <p className="section-subtitle">Paste or type your SQL statements (auto-parses as you type)</p>
+        <div className="manual-input-card">
+            <div className="card-header">
+                <div className="card-icon pencil-icon">
+                    <FiEdit3 />
+                </div>
+                <div className="card-title-section">
+                    <h3 className="card-title">Paste SQL Query</h3>
+                    <p className="card-subtitle">Paste or type your SQL statements (auto-parses as you type)</p>
+                </div>
+            </div>
 
-            <textarea
-                className="sql-textarea"
-                placeholder="Paste your SQL here... (e.g., SELECT * FROM users WHERE id = 1;)"
-                value={sqlText}
-                onChange={(e) => setSqlText(e.target.value)}
-                onPaste={handlePaste}
-                rows={8}
-            />
+            <div className="textarea-container">
+                <textarea
+                    className="sql-textarea"
+                    placeholder="SELECT * FROM users
+                WHERE id = 1;"
+                    value={sqlText}
+                    onChange={(e) => setSqlText(e.target.value)}
+                    onPaste={handlePaste}
+                    rows={6}
+                />
+            </div>
 
             <div className="input-footer">
                 <span className="input-hint">

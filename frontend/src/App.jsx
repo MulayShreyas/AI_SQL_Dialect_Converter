@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FiFolder } from 'react-icons/fi';
 import Navbar from './components/Navbar';
 import FileUpload from './components/FileUpload';
 import ManualInput from './components/ManualInput';
@@ -143,6 +144,12 @@ function App() {
         }
     };
 
+    // Handle clear results
+    const handleClear = () => {
+        setResults(null);
+        setStatements([]);
+    };
+
     return (
         <div className="app">
             <ToastContainer
@@ -155,7 +162,7 @@ function App() {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="dark"
+                theme="light"
             />
 
             <Navbar />
@@ -163,7 +170,10 @@ function App() {
             <main className="main-content main-content-full">
                 {/* Hero Section */}
                 <div className="hero-section">
-                    <h1 className="hero-title">🔄 SQL Dialect Converter</h1>
+                    <div className="hero-icon">
+                        <FiFolder />
+                    </div>
+                    <h1 className="hero-title">SQL Dialect Converter</h1>
                     <p className="hero-subtitle">
                         Transform SQL queries between dialects with AI-powered precision
                     </p>
@@ -178,8 +188,6 @@ function App() {
                         </div>
                     </div>
 
-                    <div className="divider" />
-
                     {/* Dialect Selector */}
                     <DialectSelector
                         dialects={dialects}
@@ -189,14 +197,9 @@ function App() {
                         onTargetDialectChange={setTargetDialect}
                     />
 
-                    <div className="divider" />
-
                     {/* Preview Section */}
                     {statements.length > 0 && (
-                        <>
-                            <StatementPreview statements={statements} />
-                            <div className="divider" />
-                        </>
+                        <StatementPreview statements={statements} />
                     )}
 
                     {/* Convert Button */}
@@ -212,9 +215,7 @@ function App() {
                                     Converting...
                                 </>
                             ) : (
-                                <>
-                                    🚀 Convert to {targetDialect}
-                                </>
+                                'Convert'
                             )}
                         </button>
                     </div>
@@ -229,14 +230,14 @@ function App() {
 
                     {/* Results Section */}
                     {results && (
-                        <>
-                            <div className="divider" />
-                            <ConversionResults
-                                results={results}
-                                formats={formats}
-                                onExport={handleExport}
-                            />
-                        </>
+                        <ConversionResults
+                            results={results}
+                            formats={formats}
+                            onExport={handleExport}
+                            onClear={handleClear}
+                            sourceDialect={sourceDialect}
+                            targetDialect={targetDialect}
+                        />
                     )}
 
                     {/* Empty State */}
@@ -251,7 +252,6 @@ function App() {
 
                 {/* Footer */}
                 <footer className="footer">
-                    <div className="footer-divider" />
                     <p>SQL Dialect Converter • Powered by AI • Made with ❤️</p>
                 </footer>
             </main>

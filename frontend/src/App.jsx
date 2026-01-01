@@ -188,37 +188,22 @@ function App() {
                         </div>
                     </div>
 
-                    {/* Dialect Selector */}
+                    {/* Dialect Selector with Convert Button */}
                     <DialectSelector
                         dialects={dialects}
                         sourceDialect={sourceDialect}
                         targetDialect={targetDialect}
                         onSourceDialectChange={setSourceDialect}
                         onTargetDialectChange={setTargetDialect}
+                        onConvert={handleConvert}
+                        isConverting={isConverting}
+                        canConvert={statements.length > 0}
                     />
 
                     {/* Preview Section */}
                     {statements.length > 0 && (
                         <StatementPreview statements={statements} />
                     )}
-
-                    {/* Convert Button */}
-                    <div className="convert-section">
-                        <button
-                            className={`convert-button ${isConverting ? 'converting' : ''}`}
-                            onClick={handleConvert}
-                            disabled={isConverting || statements.length === 0}
-                        >
-                            {isConverting ? (
-                                <>
-                                    <span className="spinner" />
-                                    Converting...
-                                </>
-                            ) : (
-                                'Convert'
-                            )}
-                        </button>
-                    </div>
 
                     {/* Progress Bar */}
                     {isConverting && (

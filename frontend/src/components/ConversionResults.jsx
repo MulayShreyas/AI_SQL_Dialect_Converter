@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { FiCheckCircle, FiCopy, FiDownload, FiX, FiFile } from 'react-icons/fi';
+import { FiCopy, FiDownload, FiX } from 'react-icons/fi';
 import './ConversionResults.css';
 
 function ConversionResults({ results, formats, onExport, onClear, sourceDialect, targetDialect }) {
     const [copiedIndex, setCopiedIndex] = useState(null);
     const [showExportDropdown, setShowExportDropdown] = useState(false);
+    const [selectedFormat, setSelectedFormat] = useState(null);
 
     const handleCopy = async (text, index) => {
         try {
@@ -30,15 +31,63 @@ function ConversionResults({ results, formats, onExport, onClear, sourceDialect,
         }
     };
 
+    const handleDownload = () => {
+        if (selectedFormat) {
+            onExport(selectedFormat);
+            setShowExportDropdown(false);
+            setSelectedFormat(null);
+        }
+    };
+
+    // Format configuration matching the reference image exactly
     const formatConfig = {
-        'PDF': { icon: '📄', ext: '.pdf', color: '#ef4444' },
-        'Word Document': { icon: '📝', ext: '.docx', color: '#2563eb' },
-        'Excel': { icon: '📊', ext: '.xlsx', color: '#16a34a' },
-        'SQL File': { icon: '💾', ext: '.sql', color: '#8b5cf6' },
+        'PDF': { 
+            icon: (
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="2" width="16" height="20" rx="2" fill="#EF4444"/>
+                    <path d="M8 6h8M8 10h8M8 14h5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+            ), 
+            ext: '.pdf', 
+            color: '#EF4444',
+            bgColor: '#FEF2F2'
+        },
+        'Word Document': { 
+            icon: (
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="2" width="16" height="20" rx="2" fill="#2563EB"/>
+                    <path d="M8 6h8M8 10h8M8 14h8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+            ), 
+            ext: '.docx', 
+            color: '#2563EB',
+            bgColor: '#EFF6FF'
+        },
+        'Excel': { 
+            icon: (
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="2" width="16" height="20" rx="2" fill="#16A34A"/>
+                    <path d="M8 8h8M8 12h8M8 16h8M12 8v12" stroke="white" strokeWidth="1.5"/>
+                </svg>
+            ), 
+            ext: '.xlsx', 
+            color: '#16A34A',
+            bgColor: '#F0FDF4'
+        },
+        'SQL File': { 
+            icon: (
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="2" width="16" height="20" rx="2" fill="#8B5CF6"/>
+                    <path d="M8 8h8M8 12h8M8 16h5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+            ), 
+            ext: '.sql', 
+            color: '#8B5CF6',
+            bgColor: '#FAF5FF'
+        },
     };
 
     const successfulResults = results.results.filter(r => r.status === 'success');
-    const isBulkMode = results.total_count > 1;
 
     return (
         <div className="output-section">
@@ -54,7 +103,7 @@ function ConversionResults({ results, formats, onExport, onClear, sourceDialect,
                 <div className="results-header">
                     <div className="results-header-left">
                         <div className="results-icon">
-                            <FiCheckCircle />
+                            <span className="results-emoji">✏️</span>
                         </div>
                         <div className="results-title-section">
                             <h3 className="results-title">
@@ -78,7 +127,12 @@ function ConversionResults({ results, formats, onExport, onClear, sourceDialect,
                         <div className="dropdown-container">
                             <button 
                                 className="action-btn"
-                                onClick={() => setShowExportDropdown(!showExportDropdown)}
+                                onClick={() => {
+                                    setShowExportDropdown(!showExportDropdown);
+                                    if (showExportDropdown) {
+                                        setSelectedFormat(null);
+                                    }
+                                }}
                             >
                                 <FiDownload />
                                 <span>Download</span>
@@ -89,30 +143,37 @@ function ConversionResults({ results, formats, onExport, onClear, sourceDialect,
                                     <p className="dropdown-title">Export as</p>
                                     <div className="format-grid">
                                         {formats.map((format) => {
-                                            const config = formatConfig[format] || { icon: '📄', ext: '.txt', color: '#6b7280' };
+                                            const config = formatConfig[format] || { 
+                                                icon: (
+                                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="4" y="2" width="16" height="20" rx="2" fill="#6B7280"/>
+                                                    </svg>
+                                                ), 
+                                                ext: '.txt', 
+                                                color: '#6B7280',
+                                                bgColor: '#F9FAFB'
+                                            };
                                             return (
                                                 <button
                                                     key={format}
-                                                    className="format-btn"
-                                                    onClick={() => {
-                                                        onExport(format);
-                                                        setShowExportDropdown(false);
-                                                    }}
+                                                    className={`format-btn ${selectedFormat === format ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedFormat(format)}
                                                 >
-                                                    <span className="format-icon">{config.icon}</span>
+                                                    <div className="format-icon-wrapper">
+                                                        {config.icon}
+                                                    </div>
                                                     <span className="format-ext">{config.ext}</span>
                                                 </button>
                                             );
                                         })}
                                     </div>
                                     <button 
-                                        className="download-all-btn"
-                                        onClick={() => {
-                                            formats.forEach(format => onExport(format));
-                                            setShowExportDropdown(false);
-                                        }}
+                                        className={`download-btn ${!selectedFormat ? 'disabled' : ''}`}
+                                        onClick={handleDownload}
+                                        disabled={!selectedFormat}
                                     >
-                                        Download All
+                                        <FiDownload />
+                                        <span>Download {selectedFormat && formatConfig[selectedFormat]?.ext}</span>
                                     </button>
                                 </div>
                             )}
@@ -145,42 +206,6 @@ function ConversionResults({ results, formats, onExport, onClear, sourceDialect,
                         </div>
                     ))}
                 </div>
-
-                {/* Bulk Export Section - Shows when multiple queries */}
-                {isBulkMode && (
-                    <div className="bulk-export-section">
-                        <div className="bulk-export-header">
-                            <FiFile className="bulk-icon" />
-                            <div>
-                                <h4 className="bulk-title">Bulk Export Available</h4>
-                                <p className="bulk-subtitle">{results.total_count} queries ready for export</p>
-                            </div>
-                        </div>
-                        <div className="bulk-format-options">
-                            {formats.map((format) => {
-                                const config = formatConfig[format] || { icon: '📄', ext: '.txt', color: '#6b7280' };
-                                return (
-                                    <button
-                                        key={format}
-                                        className="bulk-format-btn"
-                                        onClick={() => onExport(format)}
-                                        style={{ '--accent-color': config.color }}
-                                    >
-                                        <span className="bulk-format-icon">{config.icon}</span>
-                                        <span className="bulk-format-ext">{config.ext}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        <button 
-                            className="bulk-download-all"
-                            onClick={() => formats.forEach(format => onExport(format))}
-                        >
-                            <FiDownload />
-                            Download All Formats
-                        </button>
-                    </div>
-                )}
 
                 {/* Error Results */}
                 {results.error_count > 0 && (

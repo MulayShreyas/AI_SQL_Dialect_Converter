@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FiFolder } from 'react-icons/fi';
+import { FiFolder, FiRepeat } from 'react-icons/fi';
 import Navbar from './components/Navbar';
 import FileUpload from './components/FileUpload';
 import ManualInput from './components/ManualInput';
@@ -171,9 +171,9 @@ function App() {
                 {/* Hero Section */}
                 <div className="hero-section">
                     <div className="hero-icon">
-                        <FiFolder />
+                       <FiRepeat />
                     </div>
-                    <h1 className="hero-title">SQL Dialect Converter</h1>
+                    <h1 className="hero-title">SQL Queries Converter</h1>
                     <p className="hero-subtitle">
                         Transform SQL queries between dialects with AI-powered precision
                     </p>

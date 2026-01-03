@@ -135,6 +135,30 @@
     background: #E8F0F4;
 }
 
+.mariadb-icon {
+    background: #FDF5F2;
+}
+
+.teradata-icon {
+    background: #FFF3EE;
+}
+
+.snowflake-icon {
+    background: #E8F7FC;
+}
+
+.bigquery-icon {
+    background: #EEF4FF;
+}
+
+.redshift-icon {
+    background: #F5EEFF;
+}
+
+.db2-icon {
+    background: #E8EEFF;
+}
+
 .default-icon {
     background: #F0F4FF;
 }

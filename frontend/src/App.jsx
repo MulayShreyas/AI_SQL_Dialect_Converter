@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FiFolder, FiRepeat } from 'react-icons/fi';
+import { FiRepeat } from 'react-icons/fi';
+import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import FileUpload from './components/FileUpload';
 import ManualInput from './components/ManualInput';
@@ -9,6 +10,9 @@ import DialectSelector from './components/DialectSelector';
 import StatementPreview from './components/StatementPreview';
 import ConversionResults from './components/ConversionResults';
 import ProgressBar from './components/ProgressBar';
+import AuthModal from './components/AuthModal';
+import UserProfile from './components/UserProfile';
+import ConversionHistory from './components/ConversionHistory';
 import { apiService } from './services/api';
 import './App.css';
 
@@ -21,6 +25,16 @@ function App() {
     const [statements, setStatements] = useState([]);
     const [results, setResults] = useState(null);
     const [isConverting, setIsConverting] = useState(false);
+    
+    // Auth modal state
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [authModalMode, setAuthModalMode] = useState('login');
+    
+    // History modal state
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
+    
+    // Get auth context
+    const { isAuthenticated, user } = useAuth();
 
     // Load dialects and formats on mount
     useEffect(() => {
@@ -109,6 +123,26 @@ function App() {
 
             if (data.success_count > 0) {
                 toast.success(`Successfully converted ${data.success_count} statement(s)`);
+                
+                // Save conversion if user is authenticated
+                if (isAuthenticated) {
+                    try {
+                        await apiService.saveConversion({
+                            source_dialect: sourceDialect,
+                            target_dialect: targetDialect,
+                            input_type: 'QUERY',
+                            input_query: statements.join('\n'),
+                            output_query: data.results
+                                .filter(r => r.status === 'success')
+                                .map(r => r.converted)
+                                .join('\n'),
+                            conversion_status: data.error_count > 0 ? 'PARTIAL' : 'SUCCESS'
+                        });
+                        console.log('Conversion saved to history');
+                    } catch (saveError) {
+                        console.error('Failed to save conversion:', saveError);
+                    }
+                }
             }
             if (data.error_count > 0) {
                 toast.warning(`${data.error_count} statement(s) failed to convert`);
@@ -150,6 +184,27 @@ function App() {
         setStatements([]);
     };
 
+    // Handle sign up click
+    const handleSignUpClick = () => {
+        setAuthModalMode('register');
+        setShowAuthModal(true);
+    };
+
+    // Handle show history
+    const handleShowHistory = () => {
+        setShowHistoryModal(true);
+    };
+
+    // Handle load conversion from history
+    const handleLoadConversion = (conversion) => {
+        if (conversion.input_query) {
+            setStatements(conversion.input_query.split('\n').filter(s => s.trim()));
+        }
+        setSourceDialect(conversion.source_dialect);
+        setTargetDialect(conversion.target_dialect);
+        toast.success('Conversion loaded from history');
+    };
+
     return (
         <div className="app">
             <ToastContainer
@@ -165,7 +220,11 @@ function App() {
                 theme="light"
             />
 
-            <Navbar />
+            <Navbar 
+                onSignUpClick={handleSignUpClick}
+                onShowHistory={handleShowHistory}
+                userProfileComponent={UserProfile}
+            />
 
             <main className="main-content main-content-full">
                 {/* Hero Section */}
@@ -177,6 +236,11 @@ function App() {
                     <p className="hero-subtitle">
                         Transform SQL queries between dialects with AI-powered precision
                     </p>
+                    {isAuthenticated && (
+                        <p className="hero-user-greeting">
+                            Welcome back, <strong>{user?.username}</strong>! Your conversions are being saved.
+                        </p>
+                    )}
                 </div>
 
                 <div className="content-container">
@@ -240,6 +304,20 @@ function App() {
                     <p>SQL Dialect Converter • Powered by AI • Made with ❤️</p>
                 </footer>
             </main>
+
+            {/* Auth Modal */}
+            <AuthModal 
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                initialMode={authModalMode}
+            />
+
+            {/* Conversion History Modal */}
+            <ConversionHistory
+                isOpen={showHistoryModal}
+                onClose={() => setShowHistoryModal(false)}
+                onLoadConversion={handleLoadConversion}
+            />
         </div>
     );
 }

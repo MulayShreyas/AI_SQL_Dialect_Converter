@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -20,14 +20,47 @@ from generators.sql_generator import SQLGenerator
 from utils.sql_utils import SQLUtils
 from config import SUPPORTED_DIALECTS, OUTPUT_FORMATS
 
+# Import authentication and database
+from database import init_database
+from auth import get_current_user
+from routes.auth_routes import router as auth_router
+from routes.conversion_routes import router as conversion_router
+
 # Load environment variables
 load_dotenv()
 
-# Initialize FastAPI app
+# Global flag for database availability
+DATABASE_AVAILABLE = False
+
+# Lifespan context manager for startup/shutdown
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app):
+    """Lifespan context manager for startup and shutdown"""
+    global DATABASE_AVAILABLE
+    # Startup
+    try:
+        init_database()
+        DATABASE_AVAILABLE = True
+        print("✓ Database initialized successfully")
+    except Exception as e:
+        DATABASE_AVAILABLE = False
+        print(f"⚠ Warning: Could not initialize database: {e}")
+        print("⚠ Authentication and saved conversions will not be available")
+        print("⚠ Basic SQL conversion features will still work")
+    
+    yield  # Server is running
+    
+    # Shutdown
+    print("Server shutting down...")
+
+# Initialize FastAPI app with lifespan
 app = FastAPI(
     title="SQL Dialect Converter API",
     description="Convert SQL statements between different database dialects using AI",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Configure CORS
@@ -38,6 +71,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(auth_router)
+app.include_router(conversion_router)
 
 
 # Pydantic models for request/response

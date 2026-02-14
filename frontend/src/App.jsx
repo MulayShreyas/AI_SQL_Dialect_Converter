@@ -69,6 +69,11 @@ function App() {
 
     // Handle file upload
     const handleFileUpload = async (file) => {
+        if (!isAuthenticated) {
+            toast.warning('Please sign in to upload files');
+            setShowAuthModal(true);
+            return;
+        }
         try {
             console.log('Uploading file:', file.name);
             toast.info('Parsing file...');
@@ -84,6 +89,11 @@ function App() {
 
     // Handle manual SQL input
     const handleManualInput = async (sqlText) => {
+        if (!isAuthenticated) {
+            toast.warning('Please sign in to process SQL');
+            setShowAuthModal(true);
+            return;
+        }
         try {
             console.log('Parsing manual SQL input:', sqlText.substring(0, 100) + '...');
             const data = await apiService.parseSQL(sqlText);
@@ -98,6 +108,12 @@ function App() {
 
     // Handle conversion
     const handleConvert = async () => {
+        if (!isAuthenticated) {
+            toast.warning('Please sign in to convert SQL');
+            setShowAuthModal(true);
+            return;
+        }
+
         if (!statements || statements.length === 0) {
             toast.warning('Please provide SQL statements to convert');
             return;
@@ -158,6 +174,12 @@ function App() {
 
     // Handle export
     const handleExport = async (format) => {
+        if (!isAuthenticated) {
+            toast.warning('Please sign in to export results');
+            setShowAuthModal(true);
+            return;
+        }
+
         if (!results || !results.results) {
             toast.warning('No results to export');
             return;

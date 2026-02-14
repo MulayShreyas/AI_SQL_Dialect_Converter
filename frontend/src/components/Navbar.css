@@ -4,6 +4,8 @@
     background: transparent;
     animation: fadeIn 0.6s ease-out;
     width: 100%;
+    position: relative; /* Ensure it's a positioned element */
+    z-index: 1000;    /* High z-index to stay above page content */
 }
 
 .navbar-wrapper {

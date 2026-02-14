@@ -7,7 +7,6 @@ function UserProfile({ onShowHistory }) {
     const { user, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const [isHovering, setIsHovering] = useState(false);
     const dropdownRef = useRef(null);
 
     // Close dropdown when clicking outside
@@ -72,27 +71,6 @@ function UserProfile({ onShowHistory }) {
             .slice(0, 2);
     };
 
-    // Dynamic styles based on hover state
-    const logoutButtonStyle = {
-        cursor: 'pointer',
-        pointerEvents: 'auto',
-        position: 'relative',
-        zIndex: 99999,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-        width: '100%',
-        padding: '0.75rem 1rem',
-        background: isHovering ? 'rgba(239, 68, 68, 0.1)' : 'transparent',
-        border: 'none',
-        borderRadius: '10px',
-        fontSize: '0.95rem',
-        color: isHovering ? '#dc2626' : '#ef4444',
-        textAlign: 'left',
-        marginTop: '0.25rem',
-        transition: 'all 0.2s ease'
-    };
-
     return (
         <div className="user-profile" ref={dropdownRef}>
             <button
@@ -149,26 +127,17 @@ function UserProfile({ onShowHistory }) {
                         <div className="dropdown-divider"></div>
 
                         {/* Sign Out Button */}
-                        <div
-                            role="button"
-                            tabIndex={0}
-                            style={logoutButtonStyle}
+                        <button
+                            className="logout-button"
+                            type="button"
+                            disabled={isLoggingOut}
                             onClick={handleLogoutClick}
-                            onMouseEnter={() => {
-                                console.log('Mouse entered Sign Out button');
-                                setIsHovering(true);
-                            }}
-                            onMouseLeave={() => {
-                                console.log('Mouse left Sign Out button');
-                                setIsHovering(false);
-                            }}
-                            onKeyDown={(e) => e.key === 'Enter' && handleLogoutClick(e)}
                         >
-                            <FiLogOut style={{ color: isHovering ? '#dc2626' : '#ef4444', pointerEvents: 'none' }} />
-                            <span style={{ pointerEvents: 'none' }}>
+                            <FiLogOut />
+                            <span>
                                 {isLoggingOut ? 'Signing Out...' : 'Sign Out'}
                             </span>
-                        </div>
+                        </button>
                     </div>
                 </div>
             )}

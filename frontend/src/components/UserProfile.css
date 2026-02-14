@@ -1,9 +1,11 @@
-/* User Profile Container */
+/* =========================================
+   1. User Profile Container & Main Button
+   ========================================= */
 .user-profile {
     position: relative;
+    z-index: 1100; /* High z-index to ensure it sits above other content */
 }
 
-/* Profile Button */
 .user-profile-button {
     display: flex;
     align-items: center;
@@ -22,7 +24,31 @@
     transform: translateY(-1px);
 }
 
-/* Avatar */
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1f2937;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.dropdown-icon {
+    color: #64748b;
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-icon.open {
+    transform: rotate(180deg);
+}
+
+/* =========================================
+   2. Avatar Styles (Main & Dropdown)
+   ========================================= */
+/* Main Button Avatar */
 .user-avatar {
     width: 32px;
     height: 32px;
@@ -37,27 +63,24 @@
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
-.user-name {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #1f2937;
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+/* Dropdown Header Avatar */
+.dropdown-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.dropdown-icon {
-    color: #64748b;
-    font-size: 1rem;
-    transition: transform 0.3s ease;
-}
-
-.dropdown-icon.open {
-    transform: rotate(180deg);
-}
-
-/* Dropdown */
+/* =========================================
+   3. Dropdown Container & Animation
+   ========================================= */
 .user-dropdown {
     position: absolute;
     top: calc(100% + 0.5rem);
@@ -70,7 +93,8 @@
         0 0 0 1px rgba(0, 0, 0, 0.05);
     overflow: visible;
     animation: dropdownSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 9999;
+    z-index: 1200; /* Must be higher than user-profile */
+    pointer-events: auto; /* Ensures the dropdown itself captures clicks */
 }
 
 @keyframes dropdownSlide {
@@ -84,27 +108,15 @@
     }
 }
 
-/* Dropdown Header */
+/* =========================================
+   4. Dropdown Content (Header & Items)
+   ========================================= */
 .dropdown-header {
     display: flex;
     align-items: center;
     gap: 0.875rem;
     padding: 1rem;
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-}
-
-.dropdown-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .dropdown-user-info {
@@ -131,18 +143,17 @@
     white-space: nowrap;
 }
 
-/* Divider */
 .dropdown-divider {
     height: 1px;
     background: #e2e8f0;
     margin: 0;
 }
 
-/* Menu */
 .dropdown-menu {
     padding: 0.5rem;
 }
 
+/* Standard Dropdown Items */
 .dropdown-item {
     display: flex;
     align-items: center;
@@ -174,41 +185,69 @@
     color: #667eea;
 }
 
-/* Logout Item */
-.dropdown-item.logout {
+/* =========================================
+   5. Logout Button (The Fix)
+   ========================================= */
+.logout-button {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%; /* Ensure it takes full width of container */
+    padding: 0.5rem 1rem;
+    background: #ffffff;
+    border: 1px solid #fed7d7;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
     color: #ef4444;
-    margin-top: 0.25rem;
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 10001;
+    cursor: pointer !important; /* Force the hand icon */
+    transition: all 0.2s ease;
+    text-align: left;
+    margin-top: 0.5rem;
+    user-select: none;
+    position: relative; /* Helps with z-indexing */
 }
 
-.dropdown-item.logout:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: #dc2626;
-    cursor: pointer !important;
+/* CRITICAL FIX: 
+   Removed 'pointer-events: none' from span and svg.
+   If children ignore events, the hover state often fails to trigger.
+*/
+.logout-button span,
+.logout-button svg {
+    pointer-events: auto; /* Allow these to be clicked */
 }
 
-.dropdown-item.logout svg {
+.logout-button svg {
+    width: 16px;
+    height: 16px;
     color: #ef4444;
-    pointer-events: none;
+    transition: color 0.2s ease;
 }
 
-.dropdown-item.logout:hover svg {
+.logout-button:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
     color: #dc2626;
 }
 
-.dropdown-item.logout:disabled {
+.logout-button:hover svg {
+    color: #dc2626;
+}
+
+.logout-button:active:not(:disabled) {
+    background: #fecaca;
+    border-color: #f87171;
+    color: #b91c1c;
+}
+
+.logout-button:disabled {
     opacity: 0.6;
     cursor: not-allowed !important;
 }
 
-.dropdown-item.logout span {
-    pointer-events: none;
-}
-
-/* Responsive */
+/* =========================================
+   6. Responsive Styles
+   ========================================= */
 @media (max-width: 768px) {
     .user-name {
         display: none;

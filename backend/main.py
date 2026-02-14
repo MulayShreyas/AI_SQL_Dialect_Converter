@@ -22,7 +22,7 @@ from config import SUPPORTED_DIALECTS, OUTPUT_FORMATS
 
 # Import authentication and database
 from database import init_database
-from auth import get_current_user
+from auth import get_current_user, get_current_user_required
 from routes.auth_routes import router as auth_router
 from routes.conversion_routes import router as conversion_router
 
@@ -137,7 +137,7 @@ async def get_formats():
 
 # Parse uploaded file
 @app.post("/api/parse-file")
-async def parse_file(file: UploadFile = File(...)):
+async def parse_file(file: UploadFile = File(...), user: dict = Depends(get_current_user_required)):
     """
     Parse uploaded file and extract SQL statements.
     Supports: PDF, SQL, TXT, Excel (XLSX/XLS)
@@ -179,7 +179,7 @@ async def parse_file(file: UploadFile = File(...)):
 
 # Parse manual SQL input
 @app.post("/api/parse-sql")
-async def parse_sql(request: ManualSQLRequest):
+async def parse_sql(request: ManualSQLRequest, user: dict = Depends(get_current_user_required)):
     """Parse manually entered SQL text into statements"""
     try:
         statements = SQLUtils.split_statements(request.sql_text)
@@ -193,7 +193,7 @@ async def parse_sql(request: ManualSQLRequest):
 
 # Convert SQL statements
 @app.post("/api/convert", response_model=ConversionResponse)
-async def convert_sql(request: ConversionRequest):
+async def convert_sql(request: ConversionRequest, user: dict = Depends(get_current_user_required)):
     """
     Convert SQL statements from source dialect to target dialect.
     Uses AI-powered conversion via OpenRouter API.
@@ -258,7 +258,7 @@ async def convert_sql(request: ConversionRequest):
 
 # Export results to file
 @app.post("/api/export")
-async def export_results(request: ExportRequest):
+async def export_results(request: ExportRequest, user: dict = Depends(get_current_user_required)):
     """
     Export conversion results to specified format.
     Formats: PDF, Word Document, Excel, SQL File

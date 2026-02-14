@@ -9,8 +9,82 @@ const api = axios.create({
     },
 });
 
+// Add auth token to requests if available
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
 // API Service
 export const apiService = {
+    // ============ AUTH ENDPOINTS ============
+    
+    // Register new user
+    register: async (username, email, password) => {
+        const response = await api.post('/api/auth/register', {
+            username,
+            email,
+            password
+        });
+        return response.data;
+    },
+
+    // Login user
+    login: async (email, password) => {
+        const response = await api.post('/api/auth/login', {
+            email,
+            password
+        });
+        return response.data;
+    },
+
+    // Get current user
+    getCurrentUser: async (token) => {
+        const response = await api.get('/api/auth/me', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    },
+
+    // Logout user
+    logout: async () => {
+        const response = await api.post('/api/auth/logout');
+        return response.data;
+    },
+
+    // ============ CONVERSION HISTORY ENDPOINTS ============
+
+    // Save conversion
+    saveConversion: async (conversionData) => {
+        const response = await api.post('/api/conversions/save', conversionData);
+        return response.data;
+    },
+
+    // Get conversion history
+    getConversionHistory: async (limit = 50, offset = 0) => {
+        const response = await api.get(`/api/conversions/history?limit=${limit}&offset=${offset}`);
+        return response.data;
+    },
+
+    // Get single conversion
+    getConversion: async (conversionId) => {
+        const response = await api.get(`/api/conversions/${conversionId}`);
+        return response.data;
+    },
+
+    // Delete conversion
+    deleteConversion: async (conversionId) => {
+        const response = await api.delete(`/api/conversions/${conversionId}`);
+        return response.data;
+    },
+
+    // ============ EXISTING ENDPOINTS ============
+
     // Get supported dialects
     getDialects: async () => {
         console.log('API: Fetching dialects...');

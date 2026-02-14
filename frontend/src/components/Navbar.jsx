@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
+import UserProfile from './UserProfile';
 import './Navbar.css';
 
-function Navbar() {
+function Navbar({ onSignUpClick, onShowHistory }) {
+    const { isAuthenticated, loading } = useAuth();
     const [activeLink, setActiveLink] = useState('home');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -47,10 +50,16 @@ function Navbar() {
                         ))}
                     </div>
 
-                    {/* Sign Up Button */}
-                    <button className="signup-button">
-                        <span className="button-text">Sign Up</span>
-                    </button>
+                    {/* Show User Profile or Sign Up Button based on auth state */}
+                    {!loading && (
+                        isAuthenticated ? (
+                            <UserProfile onShowHistory={onShowHistory} />
+                        ) : (
+                            <button className="signup-button" onClick={onSignUpClick}>
+                                <span className="button-text">Sign Up</span>
+                            </button>
+                        )
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}

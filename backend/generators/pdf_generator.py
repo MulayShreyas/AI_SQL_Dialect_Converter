@@ -2,7 +2,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, XPreformatted
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
 from typing import List, Dict
 from datetime import datetime
@@ -56,14 +56,10 @@ class PDFGenerator:
             parent=self.styles['Code'],
             fontSize=9,
             fontName='Courier',
-            backColor=colors.HexColor('#f5f5f5'),
-            borderColor=colors.HexColor('#e0e0e0'),
-            borderWidth=1,
-            borderPadding=10,
-            leftIndent=10,
-            rightIndent=10,
-            spaceBefore=5,
-            spaceAfter=5
+            leftIndent=0,
+            rightIndent=0,
+            spaceBefore=0,
+            spaceAfter=0
         ))
         
         # Notes style
@@ -115,7 +111,7 @@ class PDFGenerator:
         ))
         
         # Subtitle with metadata
-        subtitle_text = f"{source_dialect} → {target_dialect}<br/>Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        subtitle_text = f"{source_dialect} -> {target_dialect}<br/>Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         story.append(Paragraph(subtitle_text, self.styles['CustomSubtitle']))
         
         story.append(Spacer(1, 20))
@@ -155,7 +151,7 @@ class PDFGenerator:
         for i, result in enumerate(results, 1):
             # Statement header
             status_color = '#10b981' if result['status'] == 'success' else '#ef4444'
-            status_text = '✓ Success' if result['status'] == 'success' else '✗ Error'
+            status_text = 'Success' if result['status'] == 'success' else 'Error'
             
             story.append(Paragraph(
                 f"<b>Statement {i}</b> <font color='{status_color}'>[{status_text}]</font>",
@@ -164,24 +160,50 @@ class PDFGenerator:
             
             # Original SQL
             story.append(Paragraph("<b>Original SQL:</b>", self.styles['Normal']))
-            original_sql = self._escape_sql(result['original'])
-            story.append(Paragraph(f"<font face='Courier' size='9'>{original_sql}</font>", self.styles['SQLCode']))
+            story.append(Spacer(1, 5))
+            original_sql = self._escape_sql(result['original'], to_html=False)
+            
+            # Wrap in table to prevent overlap
+            t_orig = Table([[XPreformatted(original_sql, self.styles['SQLCode'])]], colWidths=[6.5*inch])
+            t_orig.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f5f5f5')),
+                ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#e0e0e0')),
+                ('LEFTPADDING', (0, 0), (-1, -1), 10),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 10),
+                ('TOPPADDING', (0, 0), (-1, -1), 10),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+            ]))
+            story.append(t_orig)
             
             story.append(Spacer(1, 10))
             
             # Converted SQL
             if result['status'] == 'success':
                 story.append(Paragraph("<b>Converted SQL:</b>", self.styles['Normal']))
-                converted_sql = self._escape_sql(result['converted'])
-                story.append(Paragraph(f"<font face='Courier' size='9'>{converted_sql}</font>", self.styles['SQLCode']))
+                story.append(Spacer(1, 5))
+                converted_sql = self._escape_sql(result['converted'], to_html=False)
+                
+                # Wrap in table to prevent overlap
+                t_conv = Table([[XPreformatted(converted_sql, self.styles['SQLCode'])]], colWidths=[6.5*inch])
+                t_conv.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f5f5f5')),
+                    ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#e0e0e0')),
+                    ('LEFTPADDING', (0, 0), (-1, -1), 10),
+                    ('RIGHTPADDING', (0, 0), (-1, -1), 10),
+                    ('TOPPADDING', (0, 0), (-1, -1), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+                ]))
+                story.append(t_conv)
             else:
                 story.append(Paragraph("<b>Error:</b>", self.styles['Normal']))
-                story.append(Paragraph(result['notes'], self.styles['Notes']))
+                escaped_err = self._escape_sql(result['notes'])
+                story.append(Paragraph(escaped_err, self.styles['Notes']))
             
             # Notes
             if result['status'] == 'success' and result.get('notes'):
                 story.append(Spacer(1, 5))
-                story.append(Paragraph(f"<i>Notes: {result['notes']}</i>", self.styles['Notes']))
+                escaped_notes = self._escape_sql(result['notes'])
+                story.append(Paragraph(f"<i>Notes: {escaped_notes}</i>", self.styles['Notes']))
             
             story.append(Spacer(1, 20))
             
@@ -195,12 +217,17 @@ class PDFGenerator:
         
         return buffer
     
-    def _escape_sql(self, sql: str) -> str:
+    def _escape_sql(self, sql: str, to_html: bool = True) -> str:
         """Escape special characters for XML/HTML in reportlab."""
         if not sql:
             return ""
-        return (sql
+        
+        escaped = (sql
                 .replace('&', '&amp;')
                 .replace('<', '&lt;')
-                .replace('>', '&gt;')
-                .replace('\n', '<br/>'))
+                .replace('>', '&gt;'))
+        
+        if to_html:
+            escaped = escaped.replace('\n', '<br/>')
+            
+        return escaped

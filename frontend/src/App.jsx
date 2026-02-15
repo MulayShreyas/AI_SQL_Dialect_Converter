@@ -25,14 +25,14 @@ function App() {
     const [statements, setStatements] = useState([]);
     const [results, setResults] = useState(null);
     const [isConverting, setIsConverting] = useState(false);
-    
+
     // Auth modal state
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [authModalMode, setAuthModalMode] = useState('login');
-    
+
     // History modal state
     const [showHistoryModal, setShowHistoryModal] = useState(false);
-    
+
     // Get auth context
     const { isAuthenticated, user } = useAuth();
 
@@ -139,7 +139,7 @@ function App() {
 
             if (data.success_count > 0) {
                 toast.success(`Successfully converted ${data.success_count} statement(s)`);
-                
+
                 // Save conversion if user is authenticated
                 if (isAuthenticated) {
                     try {
@@ -242,7 +242,7 @@ function App() {
                 theme="light"
             />
 
-            <Navbar 
+            <Navbar
                 onSignUpClick={handleSignUpClick}
                 onShowHistory={handleShowHistory}
                 userProfileComponent={UserProfile}
@@ -252,7 +252,7 @@ function App() {
                 {/* Hero Section */}
                 <div className="hero-section">
                     <div className="hero-icon">
-                       <FiRepeat />
+                        <FiRepeat />
                     </div>
                     <h1 className="hero-title">SQL Queries Converter</h1>
                     <p className="hero-subtitle">
@@ -293,8 +293,8 @@ function App() {
 
                     {/* Progress Bar */}
                     {isConverting && (
-                        <ProgressBar 
-                            isActive={isConverting} 
+                        <ProgressBar
+                            isActive={isConverting}
                             message={`Converting ${statements.length} SQL statement(s) to ${targetDialect}...`}
                         />
                     )}
@@ -328,7 +328,7 @@ function App() {
             </main>
 
             {/* Auth Modal */}
-            <AuthModal 
+            <AuthModal
                 isOpen={showAuthModal}
                 onClose={() => setShowAuthModal(false)}
                 initialMode={authModalMode}

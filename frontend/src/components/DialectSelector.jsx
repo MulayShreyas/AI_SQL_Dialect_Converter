@@ -1,4 +1,5 @@
-import { FiChevronRight, FiArrowRight } from 'react-icons/fi';
+import React, { useState, useRef, useEffect } from 'react';
+import { FiChevronRight, FiArrowRight, FiChevronDown } from 'react-icons/fi';
 import './DialectSelector.css';
 
 // Database brand icons - Using official database brand imagery
@@ -128,6 +129,107 @@ const dialectIcons = {
     ),
 };
 
+const getDialectIcon = (dialect) => {
+    return dialectIcons[dialect] || (
+        <div className="db-icon default-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="4" fill="#F0F4FF"/>
+                <circle cx="16" cy="16" r="10" fill="#667eea"/>
+                <path d="M16 10v12M10 16h12" stroke="#fff" strokeWidth="2"/>
+            </svg>
+        </div>
+    );
+};
+
+const DialectDropdown = ({ 
+    selected, 
+    onSelect, 
+    dialects, 
+    label,
+    placeholder = "Select Dialect" 
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const handleSelect = (dialect) => {
+        // Prevent any parent handlers from firing
+        onSelect(dialect);
+        setIsOpen(false);
+    };
+
+    const toggleDropdown = (e) => {
+        // If the click comes from the dropdown menu itself, ignore it here
+        // (though stopPropagation in handleSelect should normally prevent this)
+        if (e.target.closest('.custom-dropdown-menu')) {
+            return;
+        }
+        setIsOpen(prev => !prev);
+    };
+
+    return (
+        <div 
+            className="dialect-card" 
+            ref={dropdownRef} 
+            onClick={toggleDropdown}
+            style={{ zIndex: isOpen ? 50 : 1 }} // Ensure active dropdown is on top
+        >
+            <div className="dialect-card-content">
+                <div className="dialect-icon-wrapper">
+                    {getDialectIcon(selected)}
+                </div>
+                <div className="dialect-info">
+                    <span className="dialect-name">{selected || placeholder}</span>
+                    <span className="dialect-hint">{label}</span>
+                </div>
+            </div>
+            {isOpen ? (
+                <FiChevronDown className="dialect-arrow active" />
+            ) : (
+                <FiChevronRight className="dialect-arrow" />
+            )}
+            
+            {/* Custom Dropdown Menu */}
+            {isOpen && (
+                <div className="custom-dropdown-menu">
+                    {dialects.length === 0 ? (
+                        <div className="dropdown-loading">Loading...</div>
+                    ) : (
+                        dialects.map((dialect) => (
+                            <div 
+                                key={dialect} 
+                                className={`custom-dropdown-item ${selected === dialect ? 'selected' : ''}`}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSelect(dialect);
+                                }}
+                            >
+                                <div className="dropdown-item-icon">
+                                    {getDialectIcon(dialect)}
+                                </div>
+                                <span className="dropdown-item-text">{dialect}</span>
+                                {selected === dialect && <div className="dropdown-check">✓</div>}
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
 function DialectSelector({ 
     dialects, 
     sourceDialect, 
@@ -138,18 +240,6 @@ function DialectSelector({
     isConverting,
     canConvert
 }) {
-    const getDialectIcon = (dialect) => {
-        return dialectIcons[dialect] || (
-            <div className="db-icon default-icon">
-                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="32" height="32" rx="4" fill="#F0F4FF"/>
-                    <circle cx="16" cy="16" r="10" fill="#667eea"/>
-                    <path d="M16 10v12M10 16h12" stroke="#fff" strokeWidth="2"/>
-                </svg>
-            </div>
-        );
-    };
-
     return (
         <div className="dialect-selector-container">
             <div className="dialect-header">
@@ -161,38 +251,19 @@ function DialectSelector({
                     </svg>
                 </div>
                 <div className="dialect-header-text">
-                    <h3 className="dialect-title">Select SQDialects</h3>
+                    <h3 className="dialect-title">Select SQL Dialects</h3>
                     <p className="dialect-subtitle">Choose source and target database dialects for conversion</p>
                 </div>
             </div>
             
             <div className="dialect-grid">
                 {/* Source Dialect */}
-                <div className="dialect-card">
-                    <div className="dialect-card-content">
-                        <div className="dialect-icon-wrapper">
-                            {getDialectIcon(sourceDialect)}
-                        </div>
-                        <div className="dialect-info">
-                            <select
-                                className="dialect-select"
-                                value={sourceDialect}
-                                onChange={(e) => onSourceDialectChange(e.target.value)}
-                            >
-                                {dialects.length === 0 && (
-                                    <option value="">Loading...</option>
-                                )}
-                                {dialects.map((dialect) => (
-                                    <option key={dialect} value={dialect}>
-                                        {dialect}
-                                    </option>
-                                ))}
-                            </select>
-                            <span className="dialect-hint">Preselected</span>
-                        </div>
-                    </div>
-                    <FiChevronRight className="dialect-arrow" />
-                </div>
+                <DialectDropdown 
+                    selected={sourceDialect}
+                    onSelect={onSourceDialectChange}
+                    dialects={dialects}
+                    label="Source Database"
+                />
 
                 {/* Arrow Indicator */}
                 <div className="dialect-flow-arrow">
@@ -200,34 +271,15 @@ function DialectSelector({
                 </div>
 
                 {/* Target Dialect */}
-                <div className="dialect-card">
-                    <div className="dialect-card-content">
-                        <div className="dialect-icon-wrapper">
-                            {getDialectIcon(targetDialect)}
-                        </div>
-                        <div className="dialect-info">
-                            <select
-                                className="dialect-select"
-                                value={targetDialect}
-                                onChange={(e) => onTargetDialectChange(e.target.value)}
-                            >
-                                {dialects.length === 0 && (
-                                    <option value="">Loading...</option>
-                                )}
-                                {dialects.map((dialect) => (
-                                    <option key={dialect} value={dialect}>
-                                        {dialect}
-                                    </option>
-                                ))}
-                            </select>
-                            <span className="dialect-hint">Preselected</span>
-                        </div>
-                    </div>
-                    <FiChevronRight className="dialect-arrow" />
-                </div>
+                <DialectDropdown 
+                    selected={targetDialect}
+                    onSelect={onTargetDialectChange}
+                    dialects={dialects}
+                    label="Target Database"
+                />
             </div>
 
-            {/* Convert Button - Now part of dialect selector section */}
+            {/* Convert Button */}
             <div className="dialect-convert-section">
                 <button
                     className={`dialect-convert-btn ${isConverting ? 'converting' : ''}`}

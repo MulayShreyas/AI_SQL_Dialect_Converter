@@ -1,4 +1,4 @@
-# SQL Dialect Converter
+# SQL Converter
 
 A full-stack web application for converting SQL statements between different database dialects using AI-powered conversion.
 
